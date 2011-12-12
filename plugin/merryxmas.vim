@@ -20,8 +20,6 @@ command! -bang MerryXmas call s:MerryXmas(<bang>0)
 
 
 function! s:MerryXmas(bang)
-    " TODO: bang
-
     call s:init_colors()
     call s:add_matches()
     redraw
@@ -39,7 +37,62 @@ function! s:MerryXmas(bang)
         endwhile
     finally
         call s:delete_matches()
+        if a:bang
+            let [x, y] = [getwinposx(), getwinposy()]
+            try
+                winpos 0 0
+                sleep 100m
+                for _ in range(10)
+                    call s:move_to('v')
+                    call s:move_to('>')
+                    sleep 100m
+                endfor
+                for _ in range(10)
+                    call s:move_to('^')
+                    call s:move_to('>')
+                    sleep 100m
+                endfor
+                redraw
+                echo 'Thanks for flying Vim.'
+            finally
+                " Restore winpos.
+                execute 'winpos' x y
+            endtry
+        endif
     endtry
+endfunction
+
+" this function is from winmove.vim
+let s:DX = 20
+let s:DY = 15
+function! s:move_to(dest)
+    if has('gui_running')
+        let winpos = { 'x':getwinposx(), 'y':getwinposy() }
+    else
+        redir => out | silent! winpos | redir END
+        let mpos = matchlist(out, '^[^:]\+: X \(-\?\d\+\), Y \(-\?\d\+\)')
+        if len(mpos) == 0 | return | endif
+        let winpos = { 'x':mpos[1], 'y':mpos[2] }
+    endif
+    let repeat = v:count1
+
+    if a:dest == '>'
+        let winpos['x'] = winpos['x'] + s:DX * repeat
+    elseif a:dest == '<'
+        let winpos['x'] = winpos['x'] - s:DX * repeat
+    elseif a:dest == '^'
+        let winpos['y'] = has("gui_macvim") ?
+              \ winpos['y'] + s:DY * repeat :
+              \ winpos['y'] - s:DY * repeat
+    elseif a:dest == 'v'
+        let winpos['y'] = has("gui_macvim") ?
+              \ winpos['y'] - s:DY * repeat :
+              \ winpos['y'] + s:DY * repeat
+    endif
+    if winpos['x'] < 0 | let winpos['x'] = 0 | endif
+    if winpos['y'] < 0 | let winpos['y'] = 0 | endif
+
+    execute 'winpos' winpos['x'] winpos['y']
 endfunction
 
 function! s:add_matches()
