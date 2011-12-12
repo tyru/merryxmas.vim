@@ -53,8 +53,10 @@ endfunction
 
 function! s:init_colors()
     " TODO: support terminal Vim
-    highlight MerryXmasRed   guifg=Red guibg=Red
-    highlight MerryXmasGreen guifg=DarkGreen guibg=DarkGreen
+    highlight MerryXmasRed   guifg=Red
+    highlight MerryXmasGreen guifg=DarkGreen
+    " highlight MerryXmasRed   guifg=Red guibg=Red
+    " highlight MerryXmasGreen guifg=DarkGreen guibg=DarkGreen
 
     highlight link MerryXmasOdd  MerryXmasRed
     highlight link MerryXmasEven MerryXmasGreen
