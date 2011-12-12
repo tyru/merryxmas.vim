@@ -26,11 +26,17 @@ function! s:MerryXmas(bang)
     call s:add_matches()
     redraw
     try
-        for i in range(10)
-            call s:swap_colors(i % 2)
+        let swapped = 0
+        while 1
+            " If user typed any key, stop a silly thing...
+            if getchar(1)
+                break
+            endif
+            call s:swap_colors(swapped)
+            let swapped = !swapped
             redraw
-            sleep 100m
-        endfor
+            sleep 50m
+        endwhile
     finally
         call s:delete_matches()
     endtry
